@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Typing Game</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="stats">
+            <p id="wpm">WPM: 0</p>
+            <p id="submitted">Passages Submitted: 0</p>
+            <p id="accuracy">Accuracy: null</p>
+        </div>
+        <div class="passage-display">
+            <div id="passage" class ="text-area" readonly>The quickn</div>
+            <!-- <p id="passage">The quick brown fox jumps over the lazy dog.</p> -->
+        </div>
+        <form id="typing-form">
+            <textarea id="text-input" class="text-area" rows="1" autocomplete="off" placeholder="Type here..." autofocus></textarea>
+            <button type="submit" hidden>Submit</button>
+        </form>
+        <div class="key-stats">
+            <p id="non-char-stats"></p>
+            <p id="char-stats"></p>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
