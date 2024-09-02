@@ -33,7 +33,7 @@ document.getElementById('typing-form').addEventListener('submit', function (e) {
     })
 
     passagesSubmitted++;
-    accuracyScore+=matching;
+    accuracyScore=Math.round(1000*((matching + passageLength)/passage.length))/10;
     updateStats();
     generatePassage();
     
@@ -46,7 +46,9 @@ document.getElementById('text-input').addEventListener('keydown', function (e) {
     
     if (key === 'Enter') {
         e.preventDefault(); // Prevents adding a newline
-        document.getElementById('typing-form').dispatchEvent(new Event('submit'));
+        if(inputElement.value.length>0){
+            document.getElementById('typing-form').dispatchEvent(new Event('submit'));
+        }
         return;
     }
 
@@ -75,10 +77,20 @@ document.getElementById('text-input').addEventListener('keydown', function (e) {
     updateKeyStats();
 });
 document.getElementById("text-input").addEventListener("keyup", function () {
+    let passlength =passage.length-1;
+    let inputText = document.getElementById("text-input").value;
+    let inputlength= inputText.length;
+    let progress = inputlength/passlength*100;
+    document.getElementById("progress").textContent=progress;
+
     let accuracyArray = checkAccuracy();
-    console.log(accuracyArray)
+    // console.log(accuracyArray)
     let buffer=0;
+    let notempty;
+    let stopper;
     accuracyArray.forEach((array, index1)=>{
+        notempty = array.includes(1)
+        stopper = array.includes(0);
         if(accuracyArray[index1-1])buffer += accuracyArray[index1-1].length+1;
         array.forEach((item, index)=>{
             // let spans = document.querySelectorAll(".passage-span");
@@ -100,11 +112,16 @@ document.getElementById("text-input").addEventListener("keyup", function () {
             }
         })
     })
+    
+    if(progress >99.9 && !stopper && notempty){document.getElementById('typing-form').dispatchEvent(new Event('submit'))};
     // auto submit at last character entered
 });
 document.getElementById('text-input').addEventListener("paste", e => e.preventDefault());
 
 function generatePassage(){
+    let options = ["just words", "code"]
+    // let selectedOption = options[Math.random()*options.length];
+    let selectedOption= "just words"
     document.getElementById("passage").innerHTML=""
     passage="";
     let words = ["the", "to", "i" , "and" , "of" , "he" , "was" , "you" , "her" , "not" , "it" , "in" , "she" , "his" , "that" , "is" , "my" , "with" , "me" , "had" , "on" , "as" , "for" , "but" , "at" , "him" , "have" , "do" , "be" , "what" , "would" , "said" , "out" , "they" , "we" , "up" , "this" , "from" , "did" , "are" , "could" , "so" , "were" , "all" , "if" , "back" , "like" , "one" , "there" , "no" , "into" , "will" , "just" , "when" , "about" , "then" , "them" , "been" , "know" , "am" , "your" , "over" , "down" , "an" , "or" , "time" , "eyes" , "now" , "by" , "more" , "get" , "how" , "can" , "who" , "their" , "before" , "around" , "even" , "way" , "going" , "see" , "head" , "us" , "here" , "right" , "only" , "want" , "off" , "through" , "looked" , "go" , "think" , "hand" , "some" , "again" , "away" , "too" , "still" , "something" , "than" , "face" , "other" , "never" , "asked" , "after" , "thought" , "man" , "where" , "let" , "good" , "look" , "made" , "well" , "much" , "two" , "why" , "because" , "knew" , "got" , "little" , "door" , "our" , "any" , "come" , "room" , "take" , "make" , "say" , "first" , "long" , "its" , "felt" , "took" , "wanted" ,
@@ -113,24 +130,39 @@ function generatePassage(){
         "short" , "passed" , "clear" , "less" , "bring" , "lifted" , "completely" , "ill" , "silence" , "raised" , "stomach" , "working" , "street" , "seeing" , "truth" , "filled" , "staring" , "fast" , "rather" , "corner" , "safe" , "walking" , "guys" , "year" , "pull" , "killed" , "business" , "within" , "edge" , "road" , "happen" , "shirt" , "picked" , "strong" , "speak" , "straight" , "expression" , "late" , "nearly" , "son" , "child" , "sighed" , "teeth" , "sent" , "building" , "yourself" , "sit" , "warm" , "food" , "knowing" , "supposed" , "makes" , "girls" , "sort" , "entire" , "towards" , "ten" , "upon" , "afraid" , "thoughts" , "clothe" , "quiet" , "giving" , "turning" , "noticed" , "miss" , "possible" , "low" , "returned" , "seem" , "waited" , "easy" , "finger" , "kissed" , "worked" , "beneath" , "worry" , "week" , "green" , "become" , "rolled" , "pressed" , "shrugged" , "perfect" , "trust" , "telling" , "deal" , "book" , "thanks" , "barely" , "hour" , "vampire" , "sun" ,
          "wondered" , "answered" , "fall" , "sometimes" , "story" , "surprised" , "laugh" , "break" , "lay" , "immediately" , "tongue" , "figure" , "desk" , "slid" , "minute" , "knows" , "children" , "hey" , "problem" , "pointed" , "coffee" , "during" , "empty" , "wife" , "tight" , "bag" , "plan" , "appeared" , "changed" , "wide" , "play" , "ear" , "months" , "although" , "sky" , "wearing" , "sight" , "pulling" , "drink" , "hall" , "died" , "however" , "heavy" , "simply" , "quick" , "anymore" , "liked" , "gun" , "nose" , "order" , "steps" , "number" , "hers" , "sounded" , "conversation" , "finished" , "slightly" , "knees" , "became" , "lady" , "middle" , "return" , "covered" , "cheek" , "softly" , "sir" , "stone" , "alive" , "six" , "except" , "spent" , "led" , "wish" , "strange" , "sounds" , "direction" , "added" , "important" , "dress" , "certain" , "ahead" , "none" , "thick" , "surprise" , "somehow" , "wants" , "weeks" , "reach" , "tomorrow" , "bar" , "quietly" , "tiny" , "group" , "touched" , "space" , "dinner" , "hundred" , "worse" , "foot" , "somewhere" , "sweet" , "gently" , "tone" , "broke" , "stuff" , "crazy" , "trouble" , "seconds" , "ones" ,
           "kids" , "headed" , "darkness" , "stairs" , "wrapped" , "eat" , "broken" , "remembered" , "area" , "slow" , "doors" , "beyond" , "managed" , "especially" , "silent" , "bedroom" , "wonder" , "worried" , "paused" , "threw" , "questions" , "walls" , "means" , "single" , "anger" , "trees" , "seems" , "placed" , "information" , "drive" , "force" , "huge" , "heat" , "follow" , "gotten" , "expected" , "wind" , "shaking" , "daughter" , "comes" , "angry" , "meeting" , "distance" , "lying" , "doubt" , "game" , "bright" , "catch" , "police" , "cool" , "check" , "crowd" , "paper" , "early" , "piece" , "smiling" , "loud" , "forced" , "party" , "smell" , "glad" , "promise" , "listen" , "serious" , "tree" , "news" , "forget" , "clearly" , "agreed" , "magic" , "pocket" , "snapped" , "guard" , "save" , "pick" , "often" , "box" , "grin" , "keeping" , "choice" , "below" , "tired" , "lip" , "whether" , "takes" , "hung" , "brown" , "tall" , "using" , "playing" , "boys" , "earlier" , "calm" , "pleasure" , "slipped" , "grinned" , "chin" , "obviously" , "further" , "fun" , "locked" , "war" , "evening" , "letting" , "sign" , "hate" , "arrived" , "asking" , "situation" , "bottom" , "lie" , "crossed" , "jumped" , "ship" , "form" , "frowned" , "apartment" , "lights" , "pay" , "rock" , "muttered" , "bathroom" , "carefully" , "sword" , "hoping" , "cheeks" , "explain" , "kid" , "dream" , "showed" , "realize" , "normal" , "lived" , "shed" , "hoped" , "glance" , "ring" , "certainly" , "breathing" , "themselves" , "waist" , "lose" , "imagine" , "grew" , "center" , "position" , "dressed" , "laughing" , "picture" , "husband" , "wet" , "ears" , "wore" , "spot" , "secret" , "cell" , "despite" , "offered" , "definitely" , "land" , "strength" , "talked" , "scared" , "usually" , "sharp" , "clean" , "dog" , "future" , "besides" , "leg" , "easily" , "attack" , "hide" , "jaw" , "doctor" , "view" , "lives" , "shouted" , "helped" , "path" , "queen" , "allowed" , "stayed" , "stare" , "entered" , "remained" , "handle" , "memory" , "fighting" , "handed" , "cry" , "itself" , "forehead" , "soul" , "beginning" , "forever" , "pair" , "music" , "needs" , "neither" ,
-           "knife" , "cried" , "sick" , "missed" , "metal" , "truck" , "simple" , "gets" , "grace" , "aside" , "send" , "vampires" , "company" , "beat" , "protect" , "apart" , "twenty" , "ice" , "round" , "captain" , "notice" , "older" , "falling" , "sigh" , "brain" , "energy" , "jeans" , "familiar" , "explained" , "asks" , "cover" , "following" , "married" , "weight" , "hated" , "pale" , "wanting" , "team" , "moments" , "thin" , "afternoon" , "learned" , "spread" , "couch" , "putting" , "push" , "shock" , "silver" , "hospital" , "flesh" , "drove" , "drop" , "relief" , "goes" , "shake" , "turns" , "pass" , "wondering" , "opening" , "wolf" , "settled" , "gold" , "age" , "noise" , "likely" , "understood" , "dangerous" , "stuck" , "state" , "sudden" , "starting" , "carried" , "scent" , "class"];
+           "knife" , "cried" , "sick" , "missed" , "metal" , "truck", "function" , "simple" , "gets" , "grace" , "aside" , "send" , "vampires" , "company" , "beat" , "protect" , "apart" , "twenty" , "ice" , "round" , "captain" , "notice" , "older" , "falling" , "sigh" , "brain" , "energy" , "jeans" , "familiar" , "explained" , "asks" , "cover" , "following" , "married" , "weight" , "hated" , "pale" , "wanting" , "team" , "moments" , "thin" , "afternoon" , "learned" , "spread" , "couch" , "putting" , "push" , "shock" , "silver" , "hospital" , "flesh" , "drove" , "drop" , "relief" , "goes" , "shake" , "turns" , "pass" , "wondering" , "opening" , "wolf" , "settled" , "gold" , "age" , "noise" , "likely" , "understood" , "dangerous" , "stuck" , "state" , "sudden" , "starting" , "carried" , "scent" , "class"];
+    let newWords = [];
+    let entry;
     for(let i =0;i<passageLength;i++){
-        let word = words[Math.floor(words.length*Math.random())]
-
-        if(Math.random()>0.9){
-            word = word.charAt(0).toUpperCase() + word.slice(1);
+        newWords.push(words[Math.floor(words.length*Math.random())])
+    }
+    for(let i =0; i<newWords.length;i++){
+        let word = newWords[i];
+        if(selectedOption=="code"){
+            entry = word + " ";
+            entry = word + ".";
+            entry = word + ", "
         }
-        // word then space
-        // word then dot word
-        // word then at word
-        // word then at words
-        // word then with word as param (not stackable)
-        // word then comma space
-        let entry = word + " ";
-        
-        
+        if(selectedOption=="just words"){
+            entry = word + " ";
+            if(Math.random()>0.9){
+                word = word.charAt(0).toUpperCase() + word.slice(1);
+            }
+        }
         passage += entry;
     }
+
+    
+
+    
+    // word then space
+    
+    // word then dot word
+    // word then comma space
+    // word then at word
+    // word then at words
+    // word then with word as param (not stackable)
+    
     for(let i = 0; i<passage.length;i++){
         document.getElementById("passage").innerHTML+=`<span id="passage${i}" class="passage-span"
         >${passage.slice(i,i+1)}</span>`
@@ -173,7 +205,7 @@ function updateStats() {
     
     document.getElementById('wpm').textContent = `WPM: ${wordsPerMinute}`;
     document.getElementById('submitted').textContent = `Passages Submitted: ${passagesSubmitted}`;
-    document.getElementById('accuracy').textContent = `Accuracy: ${accuracyScore}`;
+    document.getElementById('accuracy').textContent = `Accuracy: ${accuracyScore} %`;
     
 }
 
