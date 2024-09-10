@@ -1,3 +1,29 @@
+const jsonFilePath = '/declaration.json';
+
+// Fetch the JSON file
+fetch(jsonFilePath)
+  .then(response => {
+    // Check if the fetch request was successful
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return response.json();
+  })
+  .then(data => {
+    // Access the JSON data
+    // console.log(data);
+    const declaration = data.declaration;
+
+    // Example: log each sentence
+    declaration.forEach((segment, index) => {
+        // console.log("he")
+        declarationSegments.push(segment)
+    });
+  })
+  .catch(error => {
+    console.error('Error loading JSON:', error);
+  });
+
 let passage = "Aztec gold is quintessential by name";
 const passageWords = passage.split(' ').length;
 let startTime = null;
@@ -9,12 +35,26 @@ let shiftKeyPresses = 0;
 let backspaceKeyPresses = 0;
 let accuracyScore = 0;
 let passageLength=13;
+let options = ["just words", "USA declaration"]
+let selectedOption="just words"
+let declarationSegments=[];
 
+
+  
 
 document.addEventListener('DOMContentLoaded', function() {
-    generatePassage();
+    generateOptions();
+    generatePassage(selectedOption);
     updateStats();
 });
+
+document.getElementById("select-option").addEventListener("input", ()=>{
+    // console.log("chanages", document.getElementById("select-option").value)
+    selectedOption= document.getElementById("select-option").value;
+    generatePassage(selectedOption)
+})
+   
+
 
 document.getElementById('typing-form').addEventListener('submit', function (e) {
     e.preventDefault();
@@ -35,7 +75,7 @@ document.getElementById('typing-form').addEventListener('submit', function (e) {
     passagesSubmitted++;
     accuracyScore=Math.round(1000*((matching + passageLength)/passage.length))/10;
     updateStats();
-    generatePassage();
+    generatePassage(selectedOption);
     
     document.getElementById('text-input').value = '';  // Clear input
 });
@@ -118,10 +158,21 @@ document.getElementById("text-input").addEventListener("keyup", function () {
 });
 document.getElementById('text-input').addEventListener("paste", e => e.preventDefault());
 
-function generatePassage(){
-    let options = ["just words", "code"]
+function generateOptions(){
+    options.forEach((option) =>{
+        const item = document.createElement("option");
+        item.setAttribute("value", option);
+        item.innerHTML=`${option}`
+        document.getElementById("select-option").appendChild(item);
+    })
+    
+}
+
+function generatePassage(option){
+    console.log(declarationSegments[0]);
+    console.log(option)
     // let selectedOption = options[Math.random()*options.length];
-    let selectedOption= "just words"
+    
     document.getElementById("passage").innerHTML=""
     passage="";
     let words = ["the", "to", "i" , "and" , "of" , "he" , "was" , "you" , "her" , "not" , "it" , "in" , "she" , "his" , "that" , "is" , "my" , "with" , "me" , "had" , "on" , "as" , "for" , "but" , "at" , "him" , "have" , "do" , "be" , "what" , "would" , "said" , "out" , "they" , "we" , "up" , "this" , "from" , "did" , "are" , "could" , "so" , "were" , "all" , "if" , "back" , "like" , "one" , "there" , "no" , "into" , "will" , "just" , "when" , "about" , "then" , "them" , "been" , "know" , "am" , "your" , "over" , "down" , "an" , "or" , "time" , "eyes" , "now" , "by" , "more" , "get" , "how" , "can" , "who" , "their" , "before" , "around" , "even" , "way" , "going" , "see" , "head" , "us" , "here" , "right" , "only" , "want" , "off" , "through" , "looked" , "go" , "think" , "hand" , "some" , "again" , "away" , "too" , "still" , "something" , "than" , "face" , "other" , "never" , "asked" , "after" , "thought" , "man" , "where" , "let" , "good" , "look" , "made" , "well" , "much" , "two" , "why" , "because" , "knew" , "got" , "little" , "door" , "our" , "any" , "come" , "room" , "take" , "make" , "say" , "first" , "long" , "its" , "felt" , "took" , "wanted" ,
@@ -138,12 +189,8 @@ function generatePassage(){
     }
     for(let i =0; i<newWords.length;i++){
         let word = newWords[i];
-        if(selectedOption=="code"){
-            entry = word + " ";
-            entry = word + ".";
-            entry = word + ", "
-        }
-        if(selectedOption=="just words"){
+        if(option=="just words"){
+            console.log("help")
             entry = word + " ";
             if(Math.random()>0.9){
                 word = word.charAt(0).toUpperCase() + word.slice(1);
@@ -151,8 +198,9 @@ function generatePassage(){
         }
         passage += entry;
     }
-
-    
+    if(option=="USA declaration"){
+        passage=declarationSegments[Math.floor(Math.random()*declarationSegments.length)]
+    }
 
     
     // word then space
